@@ -1,9 +1,10 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import ChatMessage from "@/components/ChatMessage";
+import { useLanguage } from "../contexts/LanguageContext";
+import { getTranslation } from "../utils/i18n";
 
 interface Message {
   id: number;
@@ -12,6 +13,7 @@ interface Message {
 }
 
 const Chatbot = () => {
+  const { language } = useLanguage();
   const [inputValue, setInputValue] = useState("");
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -36,7 +38,6 @@ const Chatbot = () => {
     
     if (!inputValue.trim()) return;
     
-    // Add user message
     const newUserMessage: Message = {
       id: messages.length + 1,
       text: inputValue,
@@ -48,9 +49,7 @@ const Chatbot = () => {
     setIsLoading(true);
     
     try {
-      // Simulate API call with a timeout
       setTimeout(() => {
-        // Add bot response
         const botResponse: Message = {
           id: messages.length + 2,
           text: getBotResponse(inputValue),
@@ -60,24 +59,12 @@ const Chatbot = () => {
         setMessages((prev) => [...prev, botResponse]);
         setIsLoading(false);
       }, 500);
-      
-      // In a real app, you would call your backend API here
-      // const response = await fetch('/get', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({ message: inputValue }),
-      // });
-      // const data = await response.json();
-      
     } catch (error) {
       console.error("Error sending message:", error);
       setIsLoading(false);
     }
   };
   
-  // Simulate bot responses
   const getBotResponse = (input: string): string => {
     const inputLower = input.toLowerCase();
     
@@ -100,11 +87,10 @@ const Chatbot = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl fade-in">
-      <h1 className="text-3xl font-bold text-center mb-8">تحدث مع مستشارك الصحي</h1>
+      <h1 className="text-3xl font-bold text-center mb-8">{getTranslation('chatTitle', language)}</h1>
       
       <Card className="p-4 shadow-lg">
         <div className="flex flex-col h-[500px]">
-          {/* Chat Messages */}
           <div className="flex-grow overflow-y-auto p-4 space-y-4">
             <div className="flex flex-col">
               {messages.map((message) => (
@@ -127,7 +113,6 @@ const Chatbot = () => {
             </div>
           </div>
           
-          {/* Input Area */}
           <form onSubmit={handleSubmit} className="mt-4 flex gap-2">
             <Button
               type="button"
@@ -141,11 +126,11 @@ const Chatbot = () => {
                 <circle cx="8.5" cy="8.5" r="1.5" />
                 <path d="m21 15-5-5L5 21" />
               </svg>
-              <span className="sr-only">إرفاق صورة</span>
+              <span className="sr-only">{getTranslation('attachImage', language)}</span>
             </Button>
             <Input
               className="flex-grow"
-              placeholder="اكتب رسالتك هنا..."
+              placeholder={getTranslation('chatPlaceholder', language)}
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               disabled={isLoading}
@@ -155,14 +140,14 @@ const Chatbot = () => {
               className="shrink-0 bg-sihati-primary hover:bg-sihati-accent"
               disabled={isLoading || !inputValue.trim()}
             >
-              إرسال
+              {getTranslation('send', language)}
             </Button>
           </form>
         </div>
       </Card>
       
       <p className="text-sm text-sihati-secondary text-center mt-4">
-        ملاحظة: هذا المساعد الذكي يقدم معلومات عامة فقط ولا يغني عن استشارة الطبيب المختص.
+        {getTranslation('chatDisclaimer', language)}
       </p>
     </div>
   );
