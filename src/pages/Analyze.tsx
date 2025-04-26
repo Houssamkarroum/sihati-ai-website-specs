@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,15 +8,23 @@ import { useLanguage } from "../contexts/LanguageContext";
 import { getTranslation } from "../utils/i18n";
 import { ImageAnalysis } from "@/components/ImageAnalysis";
 import { NearbyHospitals } from "@/components/NearbyHospitals";
+import { useToast } from "@/hooks/use-toast";
 
 const Analyze = () => {
   const { language } = useLanguage();
+  const { toast } = useToast();
   const [description, setDescription] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<string | null>(null);
 
   const handleAnalyze = () => {
     if (description.trim().length < 20) {
+      toast({
+        title: language === 'ar' ? "تنبيه" : "Alert",
+        description: language === 'ar' ? "الرجاء إدخال وصف أكثر تفصيلاً (20 حرف على الأقل)" : 
+                    "Please enter a more detailed description (at least 20 characters)",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -38,6 +47,11 @@ const Analyze = () => {
           "على حساب الوصف ديالك، يمكن كتعاني من صداع توتري. كننصحو بالراحة وشرب الماء بكميات كافية، وتجنب مصادر التوتر إلى قدرتي. إلى بقى الصداع كتر من 3 أيام، تواصل مع طبيب." :
           "ⵙ ⵓⵙⵔⵓⵎⵙ ⵅⴼ ⵓⴳⵍⴰⵎ ⵏⵏⴽ, ⵉⵣⵎⵔ ⴰⴷ ⵜⴰⵏⵏⴰⵢⴷ ⴰⵇⵙⵙⴰⵃ ⵏ ⵓⵣⵍⵍⵓⵎ. ⵏⵜⵜⵏⵚⵃ ⵙ ⵓⵙⵓⵏⴼⵓ ⴷ ⵜⵉⵙⵙⵉ ⵏ ⵡⴰⵎⴰⵏ ⵙ ⵓⵎⴰⵜⴰ ⴷ ⵡⴰⴷⴷⴰ."
         );
+        
+        toast({
+          title: language === 'ar' ? "تم التحليل" : "Analysis Complete",
+          description: language === 'ar' ? "تم تحليل الأعراض بنجاح" : "Symptoms analyzed successfully",
+        });
       } else if (lowerDescription.includes("حمى") || lowerDescription.includes("fever")) {
         setResult(
           language === 'ar' ? 
@@ -48,6 +62,11 @@ const Analyze = () => {
           "الأعراض لي وصفتي كتشير لاحتمال الإصابة بعدوى فيروسية. كننصحو بالراحة وشرب السوائل بزاف، واستعمال دوا ديال التبريد إلى تجاوزات 38.5 درجة. إلى بقات الحمى كتر من 3 أيام، تواصل مع طبيب." :
           "ⵜⵙⵎⴰⵍ ⵜⵎⴰⵜⴰⵔⵉⵏ ⵏⵏⵉ ⵜⴳⵍⴰⵎⴷ ⵖⵔ ⵜⵉⵣⵎⵔⵜ ⵏ ⵜⴰⵥⵥⵉⵜ ⵜⴰⵙⵎⵓⵜⵜⵉⵜ. ⵏⵜⵜⵏⵚⵃ ⵙ ⵓⵙⵓⵏⴼⵓ ⴷ ⵜⵉⵙⵙⵉ ⵏ ⵉⵎⵙⵙⵉⵏ ⵙ ⵡⴰⵜⵜⴰⵙ."
         );
+        
+        toast({
+          title: language === 'ar' ? "تم التحليل" : "Analysis Complete",
+          description: language === 'ar' ? "تم تحليل الأعراض بنجاح" : "Symptoms analyzed successfully",
+        });
       } else {
         setResult(
           language === 'ar' ? 
@@ -58,6 +77,11 @@ const Analyze = () => {
           "على حساب المعلومات لي قدمتي، صعيب نحددو حالة معينة. عافاك قدم تفاصيل أكثر على الأعراض، أو دردش مباشرة مع المساعد الطبي ديالنا باش تحصل على تحليل أكثر دقة. كنذكرو بأن هاد التحليل أولي وماكيغنيش على استشارة الطبيب." :
           "ⵙ ⵓⵙⵔⵓⵎⵙ ⵅⴼ ⵉⵙⴰⵍⵏ ⵉⵜⵜⵓⴼⴽⴰⵏ, ⵉⵃⵔⵛ ⴰⴷ ⵏⵙⵏⴱⴷⵓ ⴰⴷⴷⴰⴷ ⵉⴱⴹⴰⵏ. ⵜⵜⵓⴷⴰⵔⵜ ⴰⴷ ⵜⴼⴽⴷ ⵓⴳⴳⴰⵔ ⵏ ⵜⵢⴰⴼⵓⵜⵉⵏ ⵅⴼ ⵜⵎⴰⵜⴰⵔⵉⵏ."
         );
+        
+        toast({
+          title: language === 'ar' ? "تم التحليل" : "Analysis Complete",
+          description: language === 'ar' ? "تم تحليل المعلومات المقدمة" : "Provided information analyzed",
+        });
       }
     }, 2000);
   };
@@ -109,8 +133,9 @@ const Analyze = () => {
             <div className="flex justify-end">
               <Button 
                 className="bg-sihati-primary hover:bg-sihati-accent text-white"
-                disabled={isAnalyzing || description.trim().length < 20}
+                disabled={isAnalyzing}
                 onClick={handleAnalyze}
+                type="button"
               >
                 {isAnalyzing ? 
                   (language === 'ar' ? "جاري التحليل..." : 

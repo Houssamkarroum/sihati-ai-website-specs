@@ -5,26 +5,58 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MapPin } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useToast } from "@/hooks/use-toast";
 
 export const NearbyHospitals = () => {
   const { language } = useLanguage();
+  const { toast } = useToast();
   const [location, setLocation] = useState("");
   const [hospitals, setHospitals] = useState<string[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
   const searchHospitals = () => {
-    if (!location) return;
+    if (!location) {
+      toast({
+        title: language === 'ar' ? "تنبيه" : "Alert",
+        description: language === 'ar' ? "الرجاء إدخال الموقع أولاً" : "Please enter a location first",
+        variant: "destructive",
+      });
+      return;
+    }
     
     setIsSearching(true);
-    // Simulate hospital search
+    
+    // Simulate hospital search with more varied data
     setTimeout(() => {
-      setHospitals([
+      const mockHospitals = [
         'مستشفى الملك فهد التخصصي',
         'مستشفى الملك فيصل التخصصي',
         'المستشفى السعودي الألماني',
-      ]);
+        'مستشفى الدكتور سليمان الحبيب',
+        'مستشفى المواساة'
+      ];
+      
+      // Use location to filter (simulate)
+      const results = mockHospitals.filter((_, index) => 
+        // Simple simulation based on string length to vary results
+        location.length % 2 === 0 ? index < 3 : index > 1
+      );
+      
+      setHospitals(results);
       setIsSearching(false);
+      
+      toast({
+        title: language === 'ar' ? "تم البحث" : "Search Completed",
+        description: language === 'ar' ? `تم العثور على ${results.length} مستشفيات قريبة` : 
+                    `Found ${results.length} nearby hospitals`,
+      });
     }, 1500);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      searchHospitals();
+    }
   };
 
   return (
@@ -50,12 +82,14 @@ export const NearbyHospitals = () => {
               }
               value={location}
               onChange={(e) => setLocation(e.target.value)}
+              onKeyPress={handleKeyPress}
               className="flex-1"
             />
             <Button 
               className="bg-sihati-primary hover:bg-sihati-accent text-white"
               onClick={searchHospitals}
-              disabled={!location || isSearching}
+              disabled={isSearching}
+              type="button"
             >
               <MapPin className="h-4 w-4 mr-2" />
               {isSearching ? 
