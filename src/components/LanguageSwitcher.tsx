@@ -26,6 +26,12 @@ const LanguageSwitcher = () => {
         <DropdownMenuItem onClick={() => setLanguage('ber')}>
           ⵜⴰⵎⴰⵣⵉⵖⵜ {language === 'ber' && '✓'}
         </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setLanguage('dar')}>
+          الدارجة {language === 'dar' && '✓'}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setLanguage('tach')}>
+          ⵜⴰⵛⵍⵃⵉⵜ {language === 'tach' && '✓'}
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
