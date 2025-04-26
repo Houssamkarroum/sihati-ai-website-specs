@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -87,4 +88,17 @@ const Login = () => {
               disabled={isLoading}
             >
               {isLoading ? 
-                (language === 'ar' ? "جاري تسجيل الدخول..." : "ⴰⵙⵙⴽⵛ
+                (language === 'ar' ? "جاري تسجيل الدخول..." : 
+                 language === 'ber' ? "ⴰⵙⵙⵯⴽⵛⵎ..." : 
+                 language === 'dar' ? "كندخل..." : 
+                 "ⵉⴳⴳⵯⴰⵎⵎⵉⵢ...") : 
+                getTranslation('login', language)}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default Login;
