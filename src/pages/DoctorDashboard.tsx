@@ -198,7 +198,6 @@ const DoctorDashboard = () => {
                     <TableHead>تاريخ الانضمام</TableHead>
                     <TableHead>كوبونات مستخدمة</TableHead>
                     <TableHead>الإيرادات</TableHead>
-                    <TableHead>الحالة</TableHead>
                     <TableHead>آخر استخدام للمساعد</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -209,13 +208,6 @@ const DoctorDashboard = () => {
                       <TableCell>{patient.date}</TableCell>
                       <TableCell>{patient.coupons}</TableCell>
                       <TableCell>{patient.revenue} MAD</TableCell>
-                      <TableCell>
-                        <Badge className={getStatusColor(patient.status)}>
-                          {patient.status === "active" ? "نشط" :
-                           patient.status === "completed" ? "مكتمل" :
-                           "قيد الانتظار"}
-                        </Badge>
-                      </TableCell>
                       <TableCell>{patient.lastInteraction}</TableCell>
                     </TableRow>
                   ))}
