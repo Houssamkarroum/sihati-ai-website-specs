@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -6,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { useLanguage } from "../contexts/LanguageContext";
+import { getTranslation } from "../utils/i18n";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -13,6 +14,7 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { language } = useLanguage();
 
   const validateForm = () => {
     if (!email.trim()) {
@@ -50,16 +52,15 @@ const Login = () => {
     <div className="container max-w-md mx-auto px-4 py-16 fade-in">
       <Card className="shadow-lg">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">تسجيل الدخول</CardTitle>
+          <CardTitle className="text-2xl">{getTranslation('login', language)}</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="email">البريد الإلكتروني</Label>
+              <Label htmlFor="email">{getTranslation('email', language)}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="أدخل بريدك الإلكتروني"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -67,11 +68,10 @@ const Login = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password">كلمة المرور</Label>
+              <Label htmlFor="password">{getTranslation('password', language)}</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="أدخل كلمة المرور"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -84,15 +84,17 @@ const Login = () => {
               className="w-full bg-sihati-primary hover:bg-sihati-accent transition-colors"
               disabled={isLoading}
             >
-              {isLoading ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
+              {isLoading ? 
+                (language === 'ar' ? "جاري تسجيل الدخول..." : "ⴰⵙⵙⴽⵛⴻⵎ...") : 
+                getTranslation('login', language)}
             </Button>
           </form>
           
           <div className="mt-6 text-center">
             <p className="text-sihati-secondary">
-              ليس لديك حساب؟{" "}
+              {getTranslation('noAccount', language)}{" "}
               <Link to="/register" className="text-sihati-primary hover:underline">
-                إنشاء حساب
+                {getTranslation('createAccount', language)}
               </Link>
             </p>
           </div>

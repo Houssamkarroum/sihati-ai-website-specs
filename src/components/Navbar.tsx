@@ -4,19 +4,19 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, LogOut } from "lucide-react";
 import { toast } from "sonner";
+import LanguageSwitcher from "./LanguageSwitcher";
+import { useLanguage } from "../contexts/LanguageContext";
+import { getTranslation } from "../utils/i18n";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { language } = useLanguage();
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
 
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated");
-    toast.success("تم تسجيل الخروج بنجاح");
+    toast.success(language === 'ar' ? "تم تسجيل الخروج بنجاح" : "ⵉⴼⴼⴻⵖ");
     navigate("/login");
   };
 
@@ -30,13 +30,14 @@ const Navbar = () => {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-4 space-x-reverse">
+            <LanguageSwitcher />
             {isAuthenticated ? (
               <>
                 <Link to="/" className="px-3 py-2 text-sihati-secondary hover:text-sihati-primary transition-colors">
-                  الرئيسية
+                  {getTranslation('home', language)}
                 </Link>
                 <Link to="/chatbot" className="px-3 py-2 text-sihati-secondary hover:text-sihati-primary transition-colors">
-                  المحادثة
+                  {getTranslation('chatbot', language)}
                 </Link>
                 <Button 
                   variant="outline" 
@@ -44,24 +45,29 @@ const Navbar = () => {
                   onClick={handleLogout}
                 >
                   <LogOut className="ml-2 h-4 w-4" />
-                  تسجيل الخروج
+                  {getTranslation('logout', language)}
                 </Button>
               </>
             ) : (
               <>
                 <Link to="/login">
-                  <Button variant="outline" className="mr-2">تسجيل الدخول</Button>
+                  <Button variant="outline" className="mr-2">
+                    {getTranslation('login', language)}
+                  </Button>
                 </Link>
                 <Link to="/register">
-                  <Button className="bg-sihati-primary hover:bg-sihati-accent transition-colors">إنشاء حساب</Button>
+                  <Button className="bg-sihati-primary hover:bg-sihati-accent transition-colors">
+                    {getTranslation('register', language)}
+                  </Button>
                 </Link>
               </>
             )}
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <Button variant="outline" size="icon" onClick={toggleMenu}>
+          <div className="md:hidden flex items-center gap-2">
+            <LanguageSwitcher />
+            <Button variant="outline" size="icon" onClick={() => setIsMenuOpen(!isMenuOpen)}>
               <Menu />
             </Button>
           </div>
