@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,6 +12,7 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const validateForm = () => {
     if (!email.trim()) {
@@ -39,8 +40,10 @@ const Register = () => {
     // Simulate registration process
     setTimeout(() => {
       setIsLoading(false);
+      // Set authentication state
+      localStorage.setItem("isAuthenticated", "true");
       toast.success("تم إنشاء الحساب بنجاح!");
-      // In a real app, you would handle registration and redirect
+      navigate("/");
     }, 1000);
   };
 

@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +11,8 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const validateForm = () => {
     if (!email.trim()) {
@@ -34,8 +36,13 @@ const Login = () => {
     // Simulate login process
     setTimeout(() => {
       setIsLoading(false);
+      // Set authentication state
+      localStorage.setItem("isAuthenticated", "true");
       toast.success("تم تسجيل الدخول بنجاح!");
-      // In a real app, you would handle login and redirect
+
+      // Get the redirect path from location state or default to home
+      const from = (location.state as { from?: string })?.from || "/";
+      navigate(from);
     }, 1000);
   };
 
