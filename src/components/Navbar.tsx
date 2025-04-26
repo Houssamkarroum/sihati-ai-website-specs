@@ -39,6 +39,9 @@ const Navbar = () => {
                 <Link to="/chatbot" className="px-3 py-2 text-sihati-secondary hover:text-sihati-primary transition-colors">
                   {getTranslation('chatbot', language)}
                 </Link>
+                <Link to="/analyze" className="px-3 py-2 text-sihati-secondary hover:text-sihati-primary transition-colors">
+                  {getTranslation('analyze', language)}
+                </Link>
                 <Button 
                   variant="outline" 
                   className="mr-2"
@@ -84,14 +87,21 @@ const Navbar = () => {
                     className="px-3 py-2 text-sihati-secondary hover:text-sihati-primary transition-colors"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    الرئيسية
+                    {getTranslation('home', language)}
                   </Link>
                   <Link 
                     to="/chatbot" 
                     className="px-3 py-2 text-sihati-secondary hover:text-sihati-primary transition-colors"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    المحادثة
+                    {getTranslation('chatbot', language)}
+                  </Link>
+                  <Link 
+                    to="/analyze" 
+                    className="px-3 py-2 text-sihati-secondary hover:text-sihati-primary transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {getTranslation('analyze', language)}
                   </Link>
                   <Button 
                     variant="outline" 
@@ -102,7 +112,7 @@ const Navbar = () => {
                     }}
                   >
                     <LogOut className="ml-2 h-4 w-4" />
-                    تسجيل الخروج
+                    {getTranslation('logout', language)}
                   </Button>
                 </>
               ) : (
@@ -112,14 +122,16 @@ const Navbar = () => {
                     className="px-3 py-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <Button variant="outline" className="w-full">تسجيل الدخول</Button>
+                    <Button variant="outline" className="w-full">{getTranslation('login', language)}</Button>
                   </Link>
                   <Link 
                     to="/register" 
                     className="px-3 py-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <Button className="w-full bg-sihati-primary hover:bg-sihati-accent transition-colors">إنشاء حساب</Button>
+                    <Button className="w-full bg-sihati-primary hover:bg-sihati-accent transition-colors">
+                      {getTranslation('register', language)}
+                    </Button>
                   </Link>
                 </>
               )}

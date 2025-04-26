@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "../contexts/LanguageContext";
 import { getTranslation } from "../utils/i18n";
+import ActionButtons from "../components/ActionButtons";
+import FAQ from "../components/FAQ";
+import PremiumDoctors from "../components/PremiumDoctors";
+import Community from "../components/Community";
 
 const Home = () => {
   const { language } = useLanguage();
@@ -27,6 +31,9 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Action Buttons */}
+      <ActionButtons />
 
       {/* About Section */}
       <section className="py-16">
@@ -71,6 +78,15 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Premium Doctors Section */}
+      <PremiumDoctors />
+
+      {/* FAQ Section */}
+      <FAQ />
+
+      {/* Community Section */}
+      <Community />
 
       {/* CTA Section */}
       <section className="bg-sihati-primary text-white py-16">

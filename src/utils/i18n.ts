@@ -1,3 +1,4 @@
+
 type Language = 'ar' | 'ber' | 'dar' | 'tach';
 
 interface Translations {
@@ -60,6 +61,18 @@ const translations: Translations = {
     ber: 'ⴼⴼⴻⵖ',
     dar: 'خرج',
     tach: 'ⴼⴼⵖ',
+  },
+  analyze: {
+    ar: 'تحليل الحالة',
+    ber: 'ⴰⵙⵍⴽⴷ ⵏ ⵡⴰⴷⴷⴰⴷ',
+    dar: 'تحليل الحالة',
+    tach: 'ⴰⵙⵍⴽⴷ ⵏ ⵡⴰⴷⴷⴰⴷ',
+  },
+  community: {
+    ar: 'المجتمع',
+    ber: 'ⵜⴰⵎⵙⵎⵓⵏⵜ',
+    dar: 'المجتمع',
+    tach: 'ⵜⴰⵎⵙⵎⵓⵏⵜ',
   },
   // Home page translations
   welcomeTitle: {
@@ -164,6 +177,46 @@ const translations: Translations = {
     ber: '© 2025 ⵜⴰⵣⵡⵉⵜ AI. ⴽⵓ ⵉⵣⵔⴼⴰⵏ ⵜⵜⵡⴰⵖⴰⵍⵏ.',
     dar: '© 2025 صحتي AI. جميع الحقوق محفوظة.',
     tach: '© 2025 ⵜⴰⴷⵓⵙⵉ AI. ⴽⵓ ⵉⵣⵔⴼⴰⵏ ⵜⵜⵡⴰⵖⴰⵍⵏ.',
+  },
+  // Premium doctors
+  premiumDoctors: {
+    ar: 'المساعدون المتخصصون',
+    ber: 'ⵉⵎⵙⵜⴰⵡⴰⵔⵏ ⵉⵜⵜⵡⴰⵙⵙⵏⵏ',
+    dar: 'المساعدين المتخصصين',
+    tach: 'ⵉⵎⵙⵜⴰⵡⵔⵏ ⵉⵜⵜⵡⴰⵙⵙⵏⵏ',
+  },
+  enterCoupon: {
+    ar: 'أدخل رمز الكوبون',
+    ber: 'ⵙⵉⴷⴼ ⵜⴰⵏⵉⵍⵜ ⵏ ⵓⴽⵓⴱⵓⵏ',
+    dar: 'دخل شيفرة الكوبون',
+    tach: 'ⵙⵉⴷⴼ ⵜⴰⵏⵉⵍⵜ ⵏ ⵓⴽⵓⴱⵓⵏ',
+  },
+  unlock: {
+    ar: 'فتح',
+    ber: 'ⵔⵣⵎ',
+    dar: 'حل',
+    tach: 'ⵔⵣⵎ',
+  },
+  // Community
+  communitySection: {
+    ar: 'مجتمع صحتي',
+    ber: 'ⵜⴰⵎⵙⵎⵓⵏⵜ ⵏ ⵜⵣⵡⵉⵜ',
+    dar: 'مجتمع صحتي',
+    tach: 'ⵜⴰⵎⵙⵎⵓⵏⵜ ⵏ ⵜⴷⵓⵙⵉ',
+  },
+  // FAQ section
+  faqSection: {
+    ar: 'الأسئلة الشائعة',
+    ber: 'ⵉⵙⵇⵙⵉⵜⵏ ⵉⵜⵜⵡⴰⵙⵇⵙⴰⵏ ⵙ ⵡⴰⵜⴰⵙ',
+    dar: 'الأسئلة المتداولة',
+    tach: 'ⵉⵙⵇⵙⵉⵜⵏ ⵉⵜⵜⵡⴰⵙⵇⵙⴰⵏ ⵙ ⵡⴰⵜⴰⵙ',
+  },
+  // Analyze page
+  analyzeCase: {
+    ar: 'تحليل الحالة الصحية',
+    ber: 'ⴰⵙⵍⴽⴷ ⵏ ⵡⴰⴷⴷⴰⴷ ⵏ ⵜⵣⵡⵉⵜ',
+    dar: 'تحليل الحالة الصحية',
+    tach: 'ⴰⵙⵍⴽⴷ ⵏ ⵡⴰⴷⴷⴰⴷ ⵏ ⵜⴷⵓⵙⵉ',
   },
 };
 

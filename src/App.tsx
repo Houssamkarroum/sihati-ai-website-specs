@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,6 +10,7 @@ import Home from "./pages/Home";
 import Chatbot from "./pages/Chatbot";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Analyze from "./pages/Analyze";
 import NotFound from "./pages/NotFound";
 import AuthGuard from "./components/AuthGuard";
 
@@ -36,6 +38,14 @@ const App = () => (
                 element={
                   <AuthGuard>
                     <Chatbot />
+                  </AuthGuard>
+                }
+              />
+              <Route
+                path="/analyze"
+                element={
+                  <AuthGuard>
+                    <Analyze />
                   </AuthGuard>
                 }
               />
