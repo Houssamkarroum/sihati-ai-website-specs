@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/componen
 import { Lock, Unlock, Search, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "../contexts/LanguageContext";
-import { getTranslation } from "../utils/i18n";
 
 interface Doctor {
   id: string;
@@ -23,6 +22,7 @@ const PremiumDoctors = () => {
   const [couponCode, setCouponCode] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedDoctorId, setSelectedDoctorId] = useState<string | null>(null);
   const [doctors, setDoctors] = useState<Doctor[]>([
     {
       id: "doc1",
@@ -89,6 +89,7 @@ const PremiumDoctors = () => {
                    language === 'dar' ? "تم فتح المساعد الطبي المتخصص بنجاح!" : 
                    "ⵉⵏⵏⵓⵔⵣⵎ ⵓⵎⵙⵜⴰⵡⵔ ⵏ ⵜⵙⵏⵓⵔⵉⵜ ⵉⵜⵜⵡⴰⵙⵙⵏⵏ!");
       setCouponCode("");
+      setSelectedDoctorId(null);
     } else {
       toast.error(language === 'ar' ? "رمز الكوبون غير صالح" : 
                  language === 'ber' ? "ⵜⴰⵏⵉⵍⵜ ⵏ ⵓⴽⵓⴱⵓⵏ ⵓⵔ ⵜⵖⵓⴷ" : 
@@ -102,6 +103,11 @@ const PremiumDoctors = () => {
                  language === 'ber' ? "ⵉⴱⴷⴰ ⵓⵎⵙⴰⵡⴰⵍ ⴰⴽⴷ ⵓⵎⵙⵜⴰⵡⴰⵔ ⵉⵜⵜⵡⴰⵙⵙⵏⵏ" : 
                  language === 'dar' ? "تبدات الدردشة مع المساعد المتخصص" : 
                  "ⵉⴱⴷⴰ ⵓⵎⵙⴰⵡⵍ ⴰⴽⴷ ⵓⵎⵙⵜⴰⵡⵔ ⵉⵜⵜⵡⴰⵙⵙⵏⵏ");
+  };
+
+  const toggleCouponInput = (doctorId: string) => {
+    setSelectedDoctorId(selectedDoctorId === doctorId ? null : doctorId);
+    setCouponCode("");
   };
 
   const filteredDoctors = doctors.filter(doctor => 
@@ -196,29 +202,22 @@ const PremiumDoctors = () => {
                   <p className="font-bold text-lg text-sihati-primary">{doctor.price} MAD</p>
                   
                   {doctor.locked ? (
-                    <div className="flex gap-2">
-                      <Input
-                        type="text"
-                        placeholder={
-                          language === 'ar' ? 'رمز الكوبون' : 
-                          language === 'ber' ? 'ⵜⴰⵏⵉⵍⵜ ⵏ ⵓⴽⵓⴱⵓⵏ' :
-                          language === 'dar' ? 'شيفرة الكوبون' :
-                          'ⵜⴰⵏⵉⵍⵜ ⵏ ⵓⴽⵓⴱⵓⵏ'
-                        }
-                        className="w-28 text-sm"
-                        value={couponCode}
-                        onChange={(e) => setCouponCode(e.target.value)}
-                      />
-                      <Button 
-                        className="bg-sihati-primary hover:bg-sihati-accent text-white" 
-                        onClick={() => handleUnlock(doctor.id)}
-                      >
-                        {language === 'ar' ? 'فتح' : 
-                         language === 'ber' ? 'ⵔⵣⵎ' :
-                         language === 'dar' ? 'حل' :
-                         'ⵔⵣⵎ'}
-                      </Button>
-                    </div>
+                    <Button 
+                      variant="outline" 
+                      className="border-sihati-primary text-sihati-primary" 
+                      onClick={() => toggleCouponInput(doctor.id)}
+                    >
+                      {selectedDoctorId === doctor.id ?
+                        (language === 'ar' ? 'إلغاء' : 
+                         language === 'ber' ? 'ⵙⵔ' :
+                         language === 'dar' ? 'إلغاء' :
+                         'ⵙⵔ') :
+                        (language === 'ar' ? 'إدخال كوبون' : 
+                         language === 'ber' ? 'ⵙⵓⵙⵎ ⴰⴽⵓⴱⵓⵏ' :
+                         language === 'dar' ? 'دخل كوبون' :
+                         'ⵙⵓⵙⵎ ⴰⴽⵓⴱⵓⵏ')
+                      }
+                    </Button>
                   ) : (
                     <Button 
                       className="bg-sihati-primary hover:bg-sihati-accent text-white" 
@@ -232,6 +231,33 @@ const PremiumDoctors = () => {
                     </Button>
                   )}
                 </div>
+
+                {/* Coupon input only appears for the selected doctor */}
+                {selectedDoctorId === doctor.id && (
+                  <div className="mt-4 flex gap-2">
+                    <Input
+                      type="text"
+                      placeholder={
+                        language === 'ar' ? 'رمز الكوبون' : 
+                        language === 'ber' ? 'ⵜⴰⵏⵉⵍⵜ ⵏ ⵓⴽⵓⴱⵓⵏ' :
+                        language === 'dar' ? 'شيفرة الكوبون' :
+                        'ⵜⴰⵏⵉⵍⵜ ⵏ ⵓⴽⵓⴱⵓⵏ'
+                      }
+                      className="flex-grow"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value)}
+                    />
+                    <Button 
+                      className="bg-sihati-primary hover:bg-sihati-accent text-white" 
+                      onClick={() => handleUnlock(doctor.id)}
+                    >
+                      {language === 'ar' ? 'فتح' : 
+                       language === 'ber' ? 'ⵔⵣⵎ' :
+                       language === 'dar' ? 'حل' :
+                       'ⵔⵣⵎ'}
+                    </Button>
+                  </div>
+                )}
               </CardContent>
               
               <CardFooter className="bg-green-50 text-xs text-green-600">
