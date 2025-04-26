@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -6,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { useLanguage } from "../contexts/LanguageContext";
 import { getTranslation } from "../utils/i18n";
+import { ImageAnalysis } from "@/components/ImageAnalysis";
+import { NearbyHospitals } from "@/components/NearbyHospitals";
 
 const Analyze = () => {
   const { language } = useLanguage();
@@ -62,7 +63,7 @@ const Analyze = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-16 fade-in">
+    <div className="container mx-auto px-4 py-8 fade-in">
       <h1 className="text-3xl md:text-4xl font-bold text-center text-green-800 mb-8">
         {language === 'ar' ? 'تحليل الحالة الصحية' : 
          language === 'ber' ? 'ⴰⵙⵍⴽⴷ ⵏ ⵡⴰⴷⴷⴰⴷ ⵏ ⵜⵣⵡⵉⵜ' :
@@ -70,37 +71,39 @@ const Analyze = () => {
          'ⴰⵙⵍⴽⴷ ⵏ ⵡⴰⴷⴷⴰⴷ ⵏ ⵜⴷⵓⵙⵉ'}
       </h1>
 
-      <div className="max-w-3xl mx-auto">
-        <Card className="mb-8 border-green-200 shadow-md">
+      <div className="max-w-3xl mx-auto space-y-8">
+        <ImageAnalysis />
+
+        <Card className="border-green-200 shadow-md">
           <CardHeader className="bg-sihati-light">
             <CardTitle className="text-xl text-green-800">
-              {language === 'ar' ? 'صف حالتك الصحية بالتفصيل' : 
-              language === 'ber' ? 'ⴳⵍⵎ ⴰⴷⴷⴰⴷ ⵏⵏⴽ ⵏ ⵜⵣⵡⵉⵜ ⵙ ⵓⵙⵉⵍⵖ' :
-              language === 'dar' ? 'وصف الحالة الصحية ديالك بالتفصيل' :
-              'ⴳⵍⵎ ⴰⴷⴷⴰⴷ ⵏⵏⴽ ⵏ ⵜⴷⵓⵙⵉ ⵙ ⵓⵙⵉⵍⵖ'}
+              {language === 'ar' ? 'وصف الحالة الصحية' : 
+               language === 'ber' ? 'ⴰⴳⵍⴰⵎ ⵏ ⵡⴰⴷⴷⴰⴷ ⵏ ⵜⵣⵡⵉⵜ' :
+               language === 'dar' ? 'وصف الحالة الصحية' :
+               'ⴰⴳⵍⴰⵎ ⵏ ⵡⴰⴷⴷⴰⴷ ⵏ ⵜⵣⵡⵉⵜ'}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6">
             <p className="text-green-700 mb-4">
               {language === 'ar' ? 
-                'اشرح الأعراض التي تشعر بها، متى بدأت، وأي معلومات إضافية قد تساعد في التحليل. كلما كان الوصف مفصلاً أكثر، كان التحليل أدق.' : 
-              language === 'ber' ? 
-                'ⵙⴼⵙⵔ ⵜⵎⴰⵜⴰⵔⵉⵏ ⵏⵏⴰ ⵜⵜⵉⵏⵉⴷ, ⵎⴰⵏⵜⵓⵔ ⴷ ⴱⴷⴰⵏⵜ, ⴷ ⵉⵙⴰⵍⵏ ⵢⴰⴹⵏⵉⵏ ⵉⵣⵎⵔⵏ ⴰⴷ ⵡⵙⵙⵏ ⴳ ⵓⵙⵍⴽⴷ. ⵎⵇⵇⴰⵔ ⵉⴳⴰ ⵓⴳⵍⴰⵎ ⵓⴳⴳⴰⵔ ⵏ ⵓⵙⵉⵍⵖ, ⵉⴳⴰ ⵓⵙⵍⴽⴷ ⵓⴳⴳⴰⵔ ⵏ ⵓⵙⴷⵉⴷ.' :
-              language === 'dar' ? 
-                'شرح الأعراض لي كتحس بيهم، امتى بداو، وأي معلومات إضافية ممكن تساعد في التحليل. كلما كان الوصف مفصل أكثر، غادي يكون التحليل أدق.' :
-                'ⵙⴼⵙⵔ ⵜⵎⴰⵜⴰⵔⵉⵏ ⵏⵏⴰ ⵜⵜⵉⵏⵉⴷ, ⵎⴰⵏⵜⵓⵔ ⴷ ⴱⴷⴰⵏⵜ, ⴷ ⵉⵙⴰⵍⵏ ⵢⴰⴹⵏⵉⵏ ⵉⵣⵎⵔⵏ ⴰⴷ ⵡⵙⵙⵏ ⴳ ⵓⵙⵍⴽⴷ. ⵎⵇⵇⴰⵔ ⵉⴳⴰ ⵓⴳⵍⴰⵎ ⵓⴳⴳⴰⵔ ⵏ ⵓⵙⵉⵍⵖ, ⵉⴳⴰ ⵓⵙⵍⴽⴷ ⵓⴳⴳⴰⵔ ⵏ ⵓⵙⴷⵉⴷ.'}
+                'يرجى وصف حالتك الطبية أو الأعراض التي تشعر بها:' : 
+               language === 'ber' ? 
+                'ⵜⵜⵓⴷⴰⵔⵜ ⴰⴷ ⵜⴳⵍⴰⵎⴷ ⴰⴷⴷⴰⴷ ⵏⵏⴽ ⵏ ⵜⵣⵡⵉⵜ ⵏⵉⵖ ⵜⵉⵎⴰⵜⴰⵔⵉⵏ ⵏⵏⴰ ⵜⵜⵉⵏⵉⴷ:' :
+               language === 'dar' ? 
+                'عافاك وصف الحالة الطبية ديالك أو الأعراض لي كتحس بيهم:' :
+                'ⵜⵜⵓⴷⴰⵔⵜ ⴰⴷ ⵜⴳⵍⴰⵎⴷ ⴰⴷⴷⴰⴷ ⵏⵏⴽ ⵏ ⵜⵣⵡⵉⵜ ⵏⵉⵖ ⵜⵉⵎⴰⵜⴰⵔⵉⵏ ⵏⵏⴰ ⵜⵜⵉⵏⵉⴷ:'}
             </p>
             
             <Textarea
               placeholder={
-                language === 'ar' ? 'مثال: أعاني من صداع في الجانب الأيمن من الرأس منذ يومين، مصحوب بغثيان خفيف...' : 
-                language === 'ber' ? 'ⴰⵎⴷⵢⴰ: ⵜⵜⴰⵏⵏⴰⵢⵖ ⴰⵇⵙⵙⴰⵃ ⵏ ⵓⵣⵍⵍⵓⵎ ⴳ ⵉⵖⵉⵔ ⴰⴼⴰⵙⵉ ⵙⴳ ⵓⵣⵍⵍⵓⵎ ⵙⴳ ⵙⵉⵏ ⵡⵓⵙⵙⴰⵏ, ⵉⵜⵜⵓⵎⵓⵏⵏ ⵙ ⵓⵙⵉⴹⵉ ⵉⴼⵙⵙⵓⵙⵏ...' :
-                language === 'dar' ? 'مثال: كنعاني من صداع في الجانب اليمني ديال الراس هادي يومين، مع دوخة خفيفة...' :
-                'ⴰⵎⴷⵢⴰ: ⵜⵜⴰⵏⵏⴰⵢⵖ ⴰⵇⵙⵙⴰⵃ ⵏ ⵓⵣⵍⵍⵓⵎ ⴳ ⵉⵖⵉⵔ ⴰⴼⴰⵙⵉ ⵙⴳ ⵓⵣⵍⵍⵓⵎ ⵙⴳ ⵙⵉⵏ ⵡⵓⵙⵙⴰⵏ, ⵉⵜⵜⵓⵎⵓⵏⵏ ⵙ ⵓⵙⵉⴹⵉ ⵉⴼⵙⵙⵓⵙⵏ...'
+                language === 'ar' ? 'مثال: أعاني من صداع في الجانب الأيمن من الرأس منذ يومين...' : 
+                language === 'ber' ? 'ⴰⵎⴷⵢⴰ: ⵜⵜⴰⵏⵏⴰⵢⵖ ⴰⵇⵙⵙⴰⵃ ⴳ ⵉⵖⵉⵔ ⴰⴼⴰⵙⵉ ⵙⴳ ⵓⵣⵍⵍⵓⵎ ⵙⴳ ⵙⵉⵏ ⵡⵓⵙⵙⴰⵏ...' :
+                language === 'dar' ? 'مثال: كنعاني من صداع في الجانب اليمني ديال الراس هادي يومين...' :
+                'ⴰⵎⴷⵢⴰ: ⵜⵜⴰⵏⵏⴰⵢⵖ ⴰⵇⵙⵙⴰⵃ ⴳ ⵉⵖⵉⵔ ⴰⴼⴰⵙⵉ ⵙⴳ ⵓⵣⵍⵍⵓⵎ ⵙⴳ ⵙⵉⵏ ⵡⵓⵙⵙⴰⵏ...'
               }
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="min-h-[200px] border-green-200 focus:border-green-400 mb-4"
+              className="min-h-[150px] border-green-200 focus:border-green-400 mb-4"
             />
             
             <div className="flex justify-end">
@@ -167,6 +170,8 @@ const Analyze = () => {
             </CardContent>
           </Card>
         )}
+
+        <NearbyHospitals />
       </div>
     </div>
   );
