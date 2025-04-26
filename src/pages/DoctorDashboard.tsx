@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,6 +15,7 @@ interface Patient {
   coupons: number;
   revenue: number;
   status: "active" | "completed" | "pending";
+  lastInteraction: string;
 }
 
 interface CouponCode {
@@ -43,12 +43,40 @@ const DoctorDashboard = () => {
 
     // Mock data for demonstration
     const mockPatients: Patient[] = [
-      { id: "p1", name: "أحمد محمد", date: "2023-04-20", coupons: 2, revenue: 300, status: "active" },
-      { id: "p2", name: "فاطمة علي", date: "2023-04-18", coupons: 1, revenue: 150, status: "completed" },
-      { id: "p3", name: "محمد سعيد", date: "2023-04-22", coupons: 0, revenue: 0, status: "pending" },
-      { id: "p4", name: "نورة خالد", date: "2023-04-15", coupons: 3, revenue: 450, status: "active" },
+      { 
+        id: "p1", 
+        name: "أحمد محمد", 
+        date: "2023-04-20", 
+        coupons: 2, 
+        revenue: 300, 
+        status: "active",
+        lastInteraction: "2024-04-25" 
+      },
+      { 
+        id: "p2", 
+        name: "فاطمة علي", 
+        date: "2023-04-18", 
+        coupons: 1, 
+        revenue: 150, 
+        status: "completed",
+        lastInteraction: "2024-04-24" 
+      },
+      { 
+        id: "p4", 
+        name: "نورة خالد", 
+        date: "2023-04-15", 
+        coupons: 3, 
+        revenue: 450, 
+        status: "active",
+        lastInteraction: "2024-04-26" 
+      },
     ];
     
+    // Filter patients who have used at least one coupon
+    const patientsWithCoupons = mockPatients.filter(patient => patient.coupons > 0);
+    setPatientData(patientsWithCoupons);
+    
+    // Mock coupons data
     const mockCoupons: CouponCode[] = [
       { code: "DOCTOR123", used: true, patient: "أحمد محمد", date: "2023-04-20" },
       { code: "PREMIUM456", used: true, patient: "فاطمة علي", date: "2023-04-18" },
@@ -57,11 +85,10 @@ const DoctorDashboard = () => {
       { code: "CARDIO202", used: true, patient: "نورة خالد", date: "2023-04-15" },
     ];
     
-    setPatientData(mockPatients);
     setCouponCodes(mockCoupons);
     
-    // Calculate total revenue
-    const total = mockPatients.reduce((sum, patient) => sum + patient.revenue, 0);
+    // Calculate total revenue from patients with coupons
+    const total = patientsWithCoupons.reduce((sum, patient) => sum + patient.revenue, 0);
     setTotalRevenue(total);
   }, []);
 
@@ -172,6 +199,7 @@ const DoctorDashboard = () => {
                     <TableHead>كوبونات مستخدمة</TableHead>
                     <TableHead>الإيرادات</TableHead>
                     <TableHead>الحالة</TableHead>
+                    <TableHead>آخر استخدام للمساعد</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -188,6 +216,7 @@ const DoctorDashboard = () => {
                            "قيد الانتظار"}
                         </Badge>
                       </TableCell>
+                      <TableCell>{patient.lastInteraction}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
