@@ -13,10 +13,10 @@ const Home = () => {
       <section className="bg-sihati-light py-16 md:py-24">
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-center text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold text-green-800 mb-6">
               {getTranslation('welcomeTitle', language)}
             </h1>
-            <p className="text-xl md:text-2xl text-sihati-secondary max-w-2xl mb-8">
+            <p className="text-xl md:text-2xl text-green-700 max-w-2xl mb-8">
               {getTranslation('welcomeSubtitle', language)}
             </p>
             <Link to="/chatbot">
@@ -31,16 +31,16 @@ const Home = () => {
       {/* About Section */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">{getTranslation('howHelp', language)}</h2>
+          <h2 className="text-3xl font-bold text-center text-green-800 mb-12">{getTranslation('howHelp', language)}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-lg shadow-md p-6 text-center">
+            <div className="bg-white rounded-lg shadow-md p-6 text-center border border-green-100">
               <div className="bg-sihati-light p-4 w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-sihati-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-3">{getTranslation('instantHelp', language)}</h3>
-              <p className="text-sihati-secondary">
+              <h3 className="text-xl font-semibold mb-3 text-green-800">{getTranslation('instantHelp', language)}</h3>
+              <p className="text-green-600">
                 {getTranslation('instantDesc', language)}
               </p>
             </div>
@@ -81,7 +81,7 @@ const Home = () => {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link to="/register">
-              <Button className="bg-white text-sihati-primary hover:bg-gray-100 transition-colors">
+              <Button className="bg-white text-sihati-primary hover:bg-green-50 transition-colors">
                 {getTranslation('register', language)}
               </Button>
             </Link>

@@ -50,25 +50,26 @@ const Login = () => {
 
   return (
     <div className="container max-w-md mx-auto px-4 py-16 fade-in">
-      <Card className="shadow-lg">
+      <Card className="shadow-lg border-green-100">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">{getTranslation('login', language)}</CardTitle>
+          <CardTitle className="text-2xl text-green-700">{getTranslation('login', language)}</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="email">{getTranslation('email', language)}</Label>
+              <Label htmlFor="email" className="text-green-700">{getTranslation('email', language)}</Label>
               <Input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className="border-green-200 focus:border-green-400"
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password">{getTranslation('password', language)}</Label>
+              <Label htmlFor="password" className="text-green-700">{getTranslation('password', language)}</Label>
               <Input
                 id="password"
                 type="password"
@@ -76,32 +77,14 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
+                className="border-green-200 focus:border-green-400"
               />
             </div>
             
             <Button
               type="submit"
-              className="w-full bg-sihati-primary hover:bg-sihati-accent transition-colors"
+              className="w-full bg-sihati-primary hover:bg-sihati-accent text-white transition-colors"
               disabled={isLoading}
             >
               {isLoading ? 
-                (language === 'ar' ? "جاري تسجيل الدخول..." : "ⴰⵙⵙⴽⵛⴻⵎ...") : 
-                getTranslation('login', language)}
-            </Button>
-          </form>
-          
-          <div className="mt-6 text-center">
-            <p className="text-sihati-secondary">
-              {getTranslation('noAccount', language)}{" "}
-              <Link to="/register" className="text-sihati-primary hover:underline">
-                {getTranslation('createAccount', language)}
-              </Link>
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-};
-
-export default Login;
+                (language === 'ar' ? "جاري تسجيل الدخول..." : "ⴰⵙⵙⴽⵛ
