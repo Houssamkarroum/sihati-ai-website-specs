@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, LogOut, LayoutDashboard } from "lucide-react";
@@ -10,11 +9,26 @@ import { getTranslation } from "../utils/i18n";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [logoColors, setLogoColors] = useState({
+    first: 'text-green-500',
+    second: 'text-white'
+  });
   const navigate = useNavigate();
   const { language } = useLanguage();
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
   const userType = localStorage.getItem("userType");
   const isDoctor = userType === "doctor";
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLogoColors(prev => ({
+        first: prev.first === 'text-green-500' ? 'text-white' : 'text-green-500',
+        second: prev.second === 'text-white' ? 'text-green-500' : 'text-white'
+      }));
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated");
@@ -24,11 +38,16 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white shadow-sm sticky top-0 z-50">
+    <nav className="bg-sihati-primary shadow-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
-          <Link to="/" className="text-2xl font-bold text-sihati-primary">
-            صحتي AI
+          <Link to="/" className="text-2xl font-bold">
+            <span className={`transition-colors duration-500 ${logoColors.first}`}>
+              SAHT
+            </span>
+            <span className={`transition-colors duration-500 ${logoColors.second}`}>
+              -INO
+            </span>
           </Link>
 
           {/* Desktop Menu */}
