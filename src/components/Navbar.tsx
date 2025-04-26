@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, LogOut } from "lucide-react";
+import { Menu, LogOut, LayoutDashboard } from "lucide-react";
 import { toast } from "sonner";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "../contexts/LanguageContext";
@@ -13,10 +13,13 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { language } = useLanguage();
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
+  const userType = localStorage.getItem("userType");
+  const isDoctor = userType === "doctor";
 
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated");
-    toast.success(language === 'ar' ? "تم تسجيل الخروج بنجاح" : "ⵉⴼⴼⴻⵖ");
+    localStorage.removeItem("userType");
+    toast.success(language === 'ar' ? "تم تسجيل الخروج بنجاح" : "ⴱⵔⴰ");
     navigate("/login");
   };
 
@@ -42,6 +45,12 @@ const Navbar = () => {
                 <Link to="/analyze" className="px-3 py-2 text-sihati-secondary hover:text-sihati-primary transition-colors">
                   {getTranslation('analyze', language)}
                 </Link>
+                {isDoctor && (
+                  <Link to="/doctor-dashboard" className="px-3 py-2 text-sihati-secondary hover:text-sihati-primary transition-colors flex items-center">
+                    <LayoutDashboard className="ml-2 h-4 w-4" />
+                    {getTranslation('dashboard', language)}
+                  </Link>
+                )}
                 <Button 
                   variant="outline" 
                   className="mr-2"
@@ -103,6 +112,16 @@ const Navbar = () => {
                   >
                     {getTranslation('analyze', language)}
                   </Link>
+                  {isDoctor && (
+                    <Link 
+                      to="/doctor-dashboard" 
+                      className="px-3 py-2 text-sihati-secondary hover:text-sihati-primary transition-colors flex items-center"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <LayoutDashboard className="ml-2 h-4 w-4" />
+                      {getTranslation('dashboard', language)}
+                    </Link>
+                  )}
                   <Button 
                     variant="outline" 
                     className="mx-3"
