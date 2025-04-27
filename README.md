@@ -84,10 +84,8 @@ _Image Example:_
 
 Here you can add any other screenshots showcasing your application UI or features!
 
-```
 ![alt text](image.png)
 
-``
 ![alt text](image-1.png)
 
 ![alt text](image-2.png)
@@ -95,4 +93,3 @@ Here you can add any other screenshots showcasing your application UI or feature
 ![alt text](image-3.png)
 
 ![alt text](image-4.png)
-```
