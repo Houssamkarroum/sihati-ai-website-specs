@@ -40,7 +40,7 @@ const PremiumDoctors = () => {
       price: 120,
       image: "/placeholder.svg",
       category: "pediatrics",
-      locked: true
+      locked: false
     },
     {
       id: "doc3",
@@ -221,7 +221,10 @@ const PremiumDoctors = () => {
                   ) : (
                     <Button 
                       className="bg-sihati-primary hover:bg-sihati-accent text-white" 
-                      onClick={() => handleStartChat(doctor.id)}
+                      onClick={() => {
+                        window.location.href = '/chatbot'; // Redirect to home page
+                        // Then redirect to doctor page
+                      }}
                     >
                       <MessageSquare className="mr-2 h-4 w-4" />
                       {language === 'ar' ? 'ابدأ المحادثة' : 

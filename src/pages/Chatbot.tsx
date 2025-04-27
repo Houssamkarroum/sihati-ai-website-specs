@@ -49,35 +49,41 @@ const Chatbot = () => {
     setIsLoading(true);
     
     try {
-      setTimeout(() => {
-        const botResponse: Message = {
-          id: messages.length + 2,
-          text: getBotResponse(inputValue),
-          isUser: false,
-        };
-        
-        setMessages((prev) => [...prev, botResponse]);
-        setIsLoading(false);
-      }, 500);
+      // Call Flask backend API
+      const response = await fetch('http://localhost:5000/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: inputValue
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      
+      const botResponse: Message = {
+        id: messages.length + 2,
+        text: data.response,
+        isUser: false,
+      };
+      
+      setMessages((prev) => [...prev, botResponse]);
     } catch (error) {
       console.error("Error sending message:", error);
+      // Fallback response if API fails
+      const botResponse: Message = {
+        id: messages.length + 2,
+        text: "عذرًا، حدث خطأ في الاتصال بالخادم. يرجى المحاولة مرة أخرى لاحقًا.",
+        isUser: false,
+      };
+      setMessages((prev) => [...prev, botResponse]);
+    } finally {
       setIsLoading(false);
-    }
-  };
-  
-  const getBotResponse = (input: string): string => {
-    const inputLower = input.toLowerCase();
-    
-    if (inputLower.includes("مرحبا") || inputLower.includes("أهلا")) {
-      return "أهلاً بك! كيف يمكنني مساعدتك في أمور صحتك اليوم؟";
-    } else if (inputLower.includes("صداع") || inputLower.includes("ألم رأس")) {
-      return "الصداع قد يكون ناتجًا عن عدة أسباب مثل التوتر، قلة النوم، أو الجفاف. حاول أخذ قسط من الراحة وشرب الماء. إذا استمر الصداع، يُفضل استشارة الطبيب.";
-    } else if (inputLower.includes("سكر") || inputLower.includes("السكري")) {
-      return "مرض السكري يتطلب متابعة منتظمة مع الطبيب. من المهم الالتزام بالأدوية الموصوفة والحفاظ على نظام غذائي صحي وممارسة الرياضة بانتظام.";
-    } else if (inputLower.includes("ضغط") || inputLower.includes("الضغط")) {
-      return "ارتفاع ضغط الدم حالة شائعة تتطلب مراقبة منتظمة. يُنصح بتقليل الملح في الطعام، وممارسة الرياضة، والحفاظ على وزن صحي.";
-    } else {
-      return "شكرًا على سؤالك. للحصول على معلومات طبية دقيقة، يُفضل استشارة مقدم الرعاية الصحية الخاص بك. هل هناك شيء آخر يمكنني مساعدتك به؟";
     }
   };
 
@@ -88,7 +94,7 @@ const Chatbot = () => {
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl fade-in">
       <h1 className="text-3xl font-bold text-center mb-8">{getTranslation('chatTitle', language)}</h1>
-      
+     
       <Card className="p-4 shadow-lg">
         <div className="flex flex-col h-[500px]">
           <div className="flex-grow overflow-y-auto p-4 space-y-4">
@@ -112,7 +118,7 @@ const Chatbot = () => {
               <div ref={messagesEndRef} />
             </div>
           </div>
-          
+         
           <form onSubmit={handleSubmit} className="mt-4 flex gap-2">
             <Button
               type="button"
@@ -135,8 +141,8 @@ const Chatbot = () => {
               onChange={(e) => setInputValue(e.target.value)}
               disabled={isLoading}
             />
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="shrink-0 bg-sihati-primary hover:bg-sihati-accent"
               disabled={isLoading || !inputValue.trim()}
             >
@@ -145,7 +151,7 @@ const Chatbot = () => {
           </form>
         </div>
       </Card>
-      
+     
       <p className="text-sm text-sihati-secondary text-center mt-4">
         {getTranslation('chatDisclaimer', language)}
       </p>
@@ -154,3 +160,4 @@ const Chatbot = () => {
 };
 
 export default Chatbot;
+

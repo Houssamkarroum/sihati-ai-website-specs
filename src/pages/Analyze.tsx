@@ -1,205 +1,414 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link } from "react-router-dom";
 import { useLanguage } from "../contexts/LanguageContext";
-import { getTranslation } from "../utils/i18n";
-import { ImageAnalysis } from "@/components/ImageAnalysis";
-import { NearbyHospitals } from "@/components/NearbyHospitals";
 import { useToast } from "@/hooks/use-toast";
+import { analyzeImage, getMedicationAdvice, findSpecialist, findHospitals } from "../lib/api";
 
 const Analyze = () => {
   const { language } = useLanguage();
   const { toast } = useToast();
   const [description, setDescription] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [result, setResult] = useState<string | null>(null);
+  const [imageResult, setImageResult] = useState<{
+    content: string;
+    translation: string;
+  } | null>(null);
+  const [textResult, setTextResult] = useState<{
+    content: string;
+    translation: string;
+  } | null>(null);
+  const [specialistResult, setSpecialistResult] = useState<{
+    content: string;
+    translation: string;
+  } | null>(null);
+  const [hospitalResult, setHospitalResult] = useState<{
+    location: string;
+    facilities: {
+      name: string;
+      latitude: number;
+      longitude: number;
+      maps_link: string;
+    }[];
+    count: number;
+  } | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [illness, setIllness] = useState("");
+  const [location, setLocation] = useState("");
 
-  const handleAnalyze = () => {
+  const handleImageUpload = async () => {
+    if (!selectedFile) return;
+    
+    setIsAnalyzing(true);
+    try {
+      const response = await analyzeImage(selectedFile, language);
+      setImageResult({
+        content: response.diagnosis,
+        translation: response.translation
+      });
+      
+      toast({
+        title: language === 'ar' ? "تم التحليل" : "Analysis Complete",
+        description: language === 'ar' ? "تم تحليل الصورة بنجاح" : "Image analyzed successfully",
+      });
+    } catch (error) {
+      toast({
+        title: language === 'ar' ? "خطأ" : "Error",
+        description: language === 'ar' 
+          ? "حدث خطأ أثناء تحليل الصورة" 
+          : "Error analyzing image",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  const handleTextAnalyze = async () => {
     if (description.trim().length < 20) {
       toast({
         title: language === 'ar' ? "تنبيه" : "Alert",
-        description: language === 'ar' ? "الرجاء إدخال وصف أكثر تفصيلاً (20 حرف على الأقل)" : 
-                    "Please enter a more detailed description (at least 20 characters)",
+        description: language === 'ar' 
+          ? "الرجاء إدخال وصف أكثر تفصيلاً (20 حرف على الأقل)" 
+          : "Please enter a more detailed description (at least 20 characters)",
         variant: "destructive",
       });
       return;
     }
 
     setIsAnalyzing(true);
-    
-    // Simulate analysis process
-    setTimeout(() => {
+    try {
+      const response = await getMedicationAdvice(description, language);
+      setTextResult({
+        content: response.advice,
+        translation: response.translation
+      });
+      
+      toast({
+        title: language === 'ar' ? "تم التحليل" : "Analysis Complete",
+        description: language === 'ar' ? "تم تحليل الأعراض بنجاح" : "Symptoms analyzed successfully",
+      });
+    } catch (error) {
+      toast({
+        title: language === 'ar' ? "خطأ" : "Error",
+        description: language === 'ar' 
+          ? "حدث خطأ أثناء التحليل" 
+          : "Error during analysis",
+        variant: "destructive",
+      });
+    } finally {
       setIsAnalyzing(false);
+    }
+  };
+
+  const handleFindSpecialist = async () => {
+    if (!illness.trim()) {
+      toast({
+        title: language === 'ar' ? "تنبيه" : "Alert",
+        description: language === 'ar' 
+          ? "الرجاء إدخال الحالة المرضية" 
+          : "Please enter the medical condition",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsAnalyzing(true);
+    try {
+      const response = await findSpecialist(illness, language);
+      setSpecialistResult({
+        content: response.specialist,
+        translation: response.translation
+      });
       
-      // Mock result based on keywords in the description
-      const lowerDescription = description.toLowerCase();
+      toast({
+        title: language === 'ar' ? "تم البحث" : "Search Complete",
+        description: language === 'ar' ? "تم العثور على الاختصاصي المناسب" : "Found appropriate specialist",
+      });
+    } catch (error) {
+      toast({
+        title: language === 'ar' ? "خطأ" : "Error",
+        description: language === 'ar' 
+          ? "حدث خطأ أثناء البحث عن الاختصاصي" 
+          : "Error finding specialist",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  const handleFindHospitals = async () => {
+    if (!location.trim()) {
+      toast({
+        title: language === 'ar' ? "تنبيه" : "Alert",
+        description: language === 'ar' 
+          ? "الرجاء إدخال موقع للبحث" 
+          : "Please enter a location to search",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsAnalyzing(true);
+    try {
+      const response = await findHospitals(location);
+      setHospitalResult({
+        location: location,
+        facilities: response.facilities,
+        count: response.facilities.length
+      });
       
-      if (lowerDescription.includes("صداع") || lowerDescription.includes("headache")) {
-        setResult(
-          language === 'ar' ? 
-          "بناءً على وصفك، قد تكون تعاني من صداع توتري. ننصح بالراحة وشرب الماء بكميات كافية، وتجنب مصادر التوتر إن أمكن. إذا استمر الصداع لأكثر من 3 أيام، يرجى استشارة الطبيب." :
-          language === 'ber' ? 
-          "ⵙ ⵓⵙⵔⵓⵎⵙ ⵅⴼ ⵓⴳⵍⴰⵎ ⵏⵏⴽ, ⵉⵣⵎⵔ ⴰⴷ ⵜⴰⵏⵏⴰⵢⴷ ⴰⵇⵙⵙⴰⵃ ⵏ ⵓⵣⵍⵍⵓⵎ. ⵏⵜⵜⵏⵚⵃ ⵙ ⵓⵙⵓⵏⴼⵓ ⴷ ⵜⵉⵙⵙⵉ ⵏ ⵡⴰⵎⴰⵏ ⵙ ⵓⵎⴰⵜⴰ ⴷ ⵡⴰⴷⴷⴰ." :
-          language === 'dar' ? 
-          "على حساب الوصف ديالك، يمكن كتعاني من صداع توتري. كننصحو بالراحة وشرب الماء بكميات كافية، وتجنب مصادر التوتر إلى قدرتي. إلى بقى الصداع كتر من 3 أيام، تواصل مع طبيب." :
-          "ⵙ ⵓⵙⵔⵓⵎⵙ ⵅⴼ ⵓⴳⵍⴰⵎ ⵏⵏⴽ, ⵉⵣⵎⵔ ⴰⴷ ⵜⴰⵏⵏⴰⵢⴷ ⴰⵇⵙⵙⴰⵃ ⵏ ⵓⵣⵍⵍⵓⵎ. ⵏⵜⵜⵏⵚⵃ ⵙ ⵓⵙⵓⵏⴼⵓ ⴷ ⵜⵉⵙⵙⵉ ⵏ ⵡⴰⵎⴰⵏ ⵙ ⵓⵎⴰⵜⴰ ⴷ ⵡⴰⴷⴷⴰ."
-        );
-        
-        toast({
-          title: language === 'ar' ? "تم التحليل" : "Analysis Complete",
-          description: language === 'ar' ? "تم تحليل الأعراض بنجاح" : "Symptoms analyzed successfully",
-        });
-      } else if (lowerDescription.includes("حمى") || lowerDescription.includes("fever")) {
-        setResult(
-          language === 'ar' ? 
-          "تشير الأعراض التي وصفتها إلى احتمالية الإصابة بعدوى فيروسية. ننصح بالراحة وشرب السوائل بكثرة، واستخدام خافض للحرارة إذا تجاوزت 38.5 درجة مئوية. إذا استمرت الحمى لأكثر من 3 أيام، يرجى استشارة الطبيب." :
-          language === 'ber' ? 
-          "ⵜⵙⵎⴰⵍ ⵜⵎⴰⵜⴰⵔⵉⵏ ⵏⵏⵉ ⵜⴳⵍⴰⵎⴷ ⵖⵔ ⵜⵉⵣⵎⵔⵜ ⵏ ⵜⴰⵥⵥⵉⵜ ⵜⴰⵙⵎⵓⵜⵜⵉⵜ. ⵏⵜⵜⵏⵚⵃ ⵙ ⵓⵙⵓⵏⴼⵓ ⴷ ⵜⵉⵙⵙⵉ ⵏ ⵉⵎⵙⵙⵉⵏ ⵙ ⵡⴰⵜⵜⴰⵙ." :
-          language === 'dar' ? 
-          "الأعراض لي وصفتي كتشير لاحتمال الإصابة بعدوى فيروسية. كننصحو بالراحة وشرب السوائل بزاف، واستعمال دوا ديال التبريد إلى تجاوزات 38.5 درجة. إلى بقات الحمى كتر من 3 أيام، تواصل مع طبيب." :
-          "ⵜⵙⵎⴰⵍ ⵜⵎⴰⵜⴰⵔⵉⵏ ⵏⵏⵉ ⵜⴳⵍⴰⵎⴷ ⵖⵔ ⵜⵉⵣⵎⵔⵜ ⵏ ⵜⴰⵥⵥⵉⵜ ⵜⴰⵙⵎⵓⵜⵜⵉⵜ. ⵏⵜⵜⵏⵚⵃ ⵙ ⵓⵙⵓⵏⴼⵓ ⴷ ⵜⵉⵙⵙⵉ ⵏ ⵉⵎⵙⵙⵉⵏ ⵙ ⵡⴰⵜⵜⴰⵙ."
-        );
-        
-        toast({
-          title: language === 'ar' ? "تم التحليل" : "Analysis Complete",
-          description: language === 'ar' ? "تم تحليل الأعراض بنجاح" : "Symptoms analyzed successfully",
-        });
-      } else {
-        setResult(
-          language === 'ar' ? 
-          "بناءً على المعلومات المقدمة، يصعب تحديد حالة محددة. يرجى تقديم المزيد من التفاصيل حول الأعراض، أو التحدث مباشرة مع مساعدنا الطبي للحصول على تحليل أكثر دقة. نذكرك بأن هذا التحليل أولي ولا يغني عن استشارة الطبيب." :
-          language === 'ber' ? 
-          "ⵙ ⵓⵙⵔⵓⵎⵙ ⵅⴼ ⵉⵙⴰⵍⵏ ⵉⵜⵜⵓⴼⴽⴰⵏ, ⵉⵃⵔⵛ ⴰⴷ ⵏⵙⵏⴱⴷⵓ ⴰⴷⴷⴰⴷ ⵉⴱⴹⴰⵏ. ⵜⵜⵓⴷⴰⵔⵜ ⴰⴷ ⵜⴼⴽⴷ ⵓⴳⴳⴰⵔ ⵏ ⵜⵢⴰⴼⵓⵜⵉⵏ ⵅⴼ ⵜⵎⴰⵜⴰⵔⵉⵏ." :
-          language === 'dar' ? 
-          "على حساب المعلومات لي قدمتي، صعيب نحددو حالة معينة. عافاك قدم تفاصيل أكثر على الأعراض، أو دردش مباشرة مع المساعد الطبي ديالنا باش تحصل على تحليل أكثر دقة. كنذكرو بأن هاد التحليل أولي وماكيغنيش على استشارة الطبيب." :
-          "ⵙ ⵓⵙⵔⵓⵎⵙ ⵅⴼ ⵉⵙⴰⵍⵏ ⵉⵜⵜⵓⴼⴽⴰⵏ, ⵉⵃⵔⵛ ⴰⴷ ⵏⵙⵏⴱⴷⵓ ⴰⴷⴷⴰⴷ ⵉⴱⴹⴰⵏ. ⵜⵜⵓⴷⴰⵔⵜ ⴰⴷ ⵜⴼⴽⴷ ⵓⴳⴳⴰⵔ ⵏ ⵜⵢⴰⴼⵓⵜⵉⵏ ⵅⴼ ⵜⵎⴰⵜⴰⵔⵉⵏ."
-        );
-        
-        toast({
-          title: language === 'ar' ? "تم التحليل" : "Analysis Complete",
-          description: language === 'ar' ? "تم تحليل المعلومات المقدمة" : "Provided information analyzed",
-        });
-      }
-    }, 2000);
+      toast({
+        title: language === 'ar' ? "تم البحث" : "Search Complete",
+        description: language === 'ar' 
+          ? `تم العثور على ${response.facilities.length} منشأة طبية` 
+          : `Found ${response.facilities.length} medical facilities`,
+      });
+    } catch (error) {
+      toast({
+        title: language === 'ar' ? "خطأ" : "Error",
+        description: language === 'ar' 
+          ? "حدث خطأ أثناء البحث عن المستشفيات" 
+          : "Error searching for hospitals",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 fade-in">
+    <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl md:text-4xl font-bold text-center text-green-800 mb-8">
-        {language === 'ar' ? 'تحليل الحالة الصحية' : 
-         language === 'ber' ? 'ⴰⵙⵍⴽⴷ ⵏ ⵡⴰⴷⴷⴰⴷ ⵏ ⵜⵣⵡⵉⵜ' :
-         language === 'dar' ? 'تحليل الحالة الصحية' :
-         'ⴰⵙⵍⴽⴷ ⵏ ⵡⴰⴷⴷⴰⴷ ⵏ ⵜⴷⵓⵙⵉ'}
+        {language === 'ar' ? 'تحليل الحالة الصحية' : 'Health Analysis'}
       </h1>
 
       <div className="max-w-3xl mx-auto space-y-8">
-        <ImageAnalysis />
-
+        {/* Image Analysis Section */}
         <Card className="border-green-200 shadow-md">
-          <CardHeader className="bg-sihati-light">
+          <CardHeader className="bg-green-50">
             <CardTitle className="text-xl text-green-800">
-              {language === 'ar' ? 'وصف الحالة الصحية' : 
-               language === 'ber' ? 'ⴰⴳⵍⴰⵎ ⵏ ⵡⴰⴷⴷⴰⴷ ⵏ ⵜⵣⵡⵉⵜ' :
-               language === 'dar' ? 'وصف الحالة الصحية' :
-               'ⴰⴳⵍⴰⵎ ⵏ ⵡⴰⴷⴷⴰⴷ ⵏ ⵜⵣⵡⵉⵜ'}
+              {language === 'ar' ? 'تحليل الصور الطبية' : 'Medical Image Analysis'}
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6">
-            <p className="text-green-700 mb-4">
-              {language === 'ar' ? 
-                'يرجى وصف حالتك الطبية أو الأعراض التي تشعر بها:' : 
-               language === 'ber' ? 
-                'ⵜⵜⵓⴷⴰⵔⵜ ⴰⴷ ⵜⴳⵍⴰⵎⴷ ⴰⴷⴷⴰⴷ ⵏⵏⴽ ⵏ ⵜⵣⵡⵉⵜ ⵏⵉⵖ ⵜⵉⵎⴰⵜⴰⵔⵉⵏ ⵏⵏⴰ ⵜⵜⵉⵏⵉⴷ:' :
-               language === 'dar' ? 
-                'عافاك وصف الحالة الطبية ديالك أو الأعراض لي كتحس بيهم:' :
-                'ⵜⵜⵓⴷⴰⵔⵜ ⴰⴷ ⵜⴳⵍⴰⵎⴷ ⴰⴷⴷⴰⴷ ⵏⵏⴽ ⵏ ⵜⵣⵡⵉⵜ ⵏⵉⵖ ⵜⵉⵎⴰⵜⴰⵔⵉⵏ ⵏⵏⴰ ⵜⵜⵉⵏⵉⴷ:'}
-            </p>
-            
+          <CardContent className="p-6 space-y-4">
+            <input 
+              type="file" 
+              accept="image/*" 
+              onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+              className="block w-full text-sm text-gray-500
+                file:mr-4 file:py-2 file:px-4
+                file:rounded-md file:border-0
+                file:text-sm file:font-semibold
+                file:bg-green-50 file:text-green-700
+                hover:file:bg-green-100"
+            />
+            <Button 
+              className="bg-green-600 hover:bg-green-700 text-white"
+              disabled={isAnalyzing || !selectedFile}
+              onClick={handleImageUpload}
+            >
+              {isAnalyzing ? 
+                (language === 'ar' ? "جاري التحليل..." : "Analyzing...") : 
+                (language === 'ar' ? "تحليل الصورة" : "Analyze Image")}
+            </Button>
+
+            {/* Image Results */}
+            {imageResult && (
+              <div className="mt-4 p-4 border border-green-200 rounded-lg bg-green-50">
+                <h3 className="font-semibold mb-2">
+                  {language === 'ar' ? 'نتيجة تحليل الصورة' : 'Image Analysis Result'}
+                </h3>
+                <div className="mb-4">
+                  <h4 className="font-medium mb-1">
+                    {language === 'ar' ? 'باللغة العربية:' : 'In Arabic:'}
+                  </h4>
+                  <p className="text-right" dir="rtl">
+                    {imageResult.translation}
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-medium mb-1">
+                    {language === 'ar' ? 'بالإنجليزية:' : 'In English:'}
+                  </h4>
+                  <p>{imageResult.content}</p>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Text Analysis Section */}
+        <Card className="border-green-200 shadow-md">
+          <CardHeader className="bg-green-50">
+            <CardTitle className="text-xl text-green-800">
+              {language === 'ar' ? 'تحليل النص الطبي' : 'Medical Text Analysis'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6 space-y-4">
             <Textarea
               placeholder={
-                language === 'ar' ? 'مثال: أعاني من صداع في الجانب الأيمن من الرأس منذ يومين...' : 
-                language === 'ber' ? 'ⴰⵎⴷⵢⴰ: ⵜⵜⴰⵏⵏⴰⵢⵖ ⴰⵇⵙⵙⴰⵃ ⴳ ⵉⵖⵉⵔ ⴰⴼⴰⵙⵉ ⵙⴳ ⵓⵣⵍⵍⵓⵎ ⵙⴳ ⵙⵉⵏ ⵡⵓⵙⵙⴰⵏ...' :
-                language === 'dar' ? 'مثال: كنعاني من صداع في الجانب اليمني ديال الراس هادي يومين...' :
-                'ⴰⵎⴷⵢⴰ: ⵜⵜⴰⵏⵏⴰⵢⵖ ⴰⵇⵙⵙⴰⵃ ⴳ ⵉⵖⵉⵔ ⴰⴼⴰⵙⵉ ⵙⴳ ⵓⵣⵍⵍⵓⵎ ⵙⴳ ⵙⵉⵏ ⵡⵓⵙⵙⴰⵏ...'
+                language === 'ar' ? 'صف حالتك الصحية أو الأعراض...' : 
+                'Describe your health condition or symptoms...'
               }
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="min-h-[150px] border-green-200 focus:border-green-400 mb-4"
+              className="min-h-[150px] border-green-200 focus:border-green-400"
             />
             
             <div className="flex justify-end">
               <Button 
-                className="bg-sihati-primary hover:bg-sihati-accent text-white"
+                className="bg-green-600 hover:bg-green-700 text-white"
                 disabled={isAnalyzing}
-                onClick={handleAnalyze}
-                type="button"
+                onClick={handleTextAnalyze}
               >
                 {isAnalyzing ? 
-                  (language === 'ar' ? "جاري التحليل..." : 
-                   language === 'ber' ? "ⴰⵙⵍⴽⴷ ⵉⴳⴳⴰⵎⵎⵉⵢ..." : 
-                   language === 'dar' ? "كنحللو..." : 
-                   "ⴰⵙⵍⴽⴷ ⵉⴳⴳⴰⵎⵎⵉⵢ...") : 
-                  (language === 'ar' ? "تحليل الحالة" : 
-                   language === 'ber' ? "ⵙⵍⴽⴷ ⴰⴷⴷⴰⴷ" : 
-                   language === 'dar' ? "تحليل الحالة" : 
-                   "ⵙⵍⴽⴷ ⴰⴷⴷⴰⴷ")}
+                  (language === 'ar' ? "جاري التحليل..." : "Analyzing...") : 
+                  (language === 'ar' ? "تحليل النص" : "Analyze Text")}
               </Button>
             </div>
+
+            {/* Text Results */}
+            {textResult && (
+              <div className="mt-4 p-4 border border-green-200 rounded-lg bg-green-50">
+                <h3 className="font-semibold mb-2">
+                  {language === 'ar' ? 'نتيجة تحليل النص' : 'Text Analysis Result'}
+                </h3>
+                <div className="mb-4">
+                  <h4 className="font-medium mb-1">
+                    {language === 'ar' ? 'باللغة العربية:' : 'In Arabic:'}
+                  </h4>
+                  <p className="text-right" dir="rtl">
+                    {textResult.translation}
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-medium mb-1">
+                    {language === 'ar' ? 'بالإنجليزية:' : 'In English:'}
+                  </h4>
+                  <p>{textResult.content}</p>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
-        {result && (
-          <Card className="border-green-300 shadow-md bg-green-50">
-            <CardHeader className="bg-sihati-light border-b border-green-200">
-              <CardTitle className="text-xl text-green-800">
-                {language === 'ar' ? 'نتيجة التحليل' : 
-                 language === 'ber' ? 'ⴰⴼⴼⵓⵖ ⵏ ⵓⵙⵍⴽⴷ' :
-                 language === 'dar' ? 'نتيجة التحليل' :
-                 'ⴰⴼⴼⵓⵖ ⵏ ⵓⵙⵍⴽⴷ'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <p className="text-green-700">{result}</p>
-              
-              <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded p-4">
-                <p className="text-amber-700 text-sm">
-                  {language === 'ar' ? 
-                    'تنبيه: هذا التحليل استرشادي فقط ولا يغني عن استشارة الطبيب المختص. يرجى مراجعة الطبيب للحصول على تشخيص دقيق.' : 
-                   language === 'ber' ? 
-                    'ⴰⵖⴰⵡⴰⵙ: ⴰⵙⵍⴽⴷ ⴰⴷ ⴷ ⴰⵎⵙⵉⵡⴹ ⵖⴰⵙ ⵓⵔ ⵉⵜⵜⵎⵎⵖⵏⴰⵢ ⵅⴼ ⵓⵙⵇⵙⵉ ⵏ ⵓⵎⵙⵓⵏⴼⵓ ⵉⵜⵜⵡⴰⵙⵙⵏⵏ. ⵜⵜⵓⴷⴰⵔⵜ ⴰⴷ ⵜⵣⵔⵉⴷ ⴰⵎⵙⵓⵏⴼⵓ ⴰⴼⴰⴷ ⴰⴷ ⵜⴰⵡⵉⴷ ⴰⵙⵏⵎⴰⵍⴰ ⵓⵙⴷⵉⴷ.' :
-                   language === 'dar' ? 
-                    'تنبيه: هاد التحليل إرشادي فقط وماكيغنيش على استشارة الطبيب المختص. عافاك راجع الطبيب باش تحصل على تشخيص دقيق.' :
-                    'ⴰⵖⴰⵡⴰⵙ: ⴰⵙⵍⴽⴷ ⴰⴷ ⴷ ⴰⵎⵙⵉⵡⴹ ⵖⴰⵙ ⵓⵔ ⵉⵜⵜⵎⵎⵖⵏⴰⵢ ⵅⴼ ⵓⵙⵇⵙⵉ ⵏ ⵓⵎⵙⵓⵏⴼⵓ ⵉⵜⵜⵡⴰⵙⵙⵏⵏ. ⵜⵜⵓⴷⴰⵔⵜ ⴰⴷ ⵜⵣⵔⵉⴷ ⴰⵎⵙⵓⵏⴼⵓ ⴰⴼⴰⴷ ⴰⴷ ⵜⴰⵡⵉⴷ ⴰⵙⵏⵎⴰⵍⴰ ⵓⵙⴷⵉⴷ.'}
-                </p>
-              </div>
-              
-              <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
-                <Button variant="outline" className="border-sihati-primary text-sihati-primary hover:bg-sihati-light" onClick={() => setResult(null)}>
-                  {language === 'ar' ? 'تحليل جديد' : 
-                   language === 'ber' ? 'ⴰⵙⵍⴽⴷ ⴰⵎⴰⵢⵏⵓ' :
-                   language === 'dar' ? 'تحليل جديد' :
-                   'ⴰⵙⵍⴽⴷ ⴰⵎⴰⵢⵏⵓ'}
-                </Button>
-                <Link to="/chatbot">
-                  <Button className="w-full sm:w-auto bg-sihati-primary hover:bg-sihati-accent text-white">
-                    {language === 'ar' ? 'التحدث مع مساعدنا الطبي' : 
-                     language === 'ber' ? 'ⵙⴰⵡⵍ ⴷ ⵓⵎⵙⵜⴰⵡⴰⵔ ⵏⵏⵖ ⵏ ⵜⵙⵏⵓⵔⵉⵜ' :
-                     language === 'dar' ? 'دردش مع المساعد الطبي ديالنا' :
-                     'ⵙⴰⵡⵍ ⴷ ⵓⵎⵙⵜⴰⵡⵔ ⵏⵏⵖ ⵏ ⵜⵙⵏⵓⵔⵉⵜ'}
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        {/* Find Specialist Section */}
+        <Card className="border-blue-200 shadow-md">
+          <CardHeader className="bg-blue-50">
+            <CardTitle className="text-xl text-blue-800">
+              {language === 'ar' ? 'البحث عن أخصائي' : 'Find Specialist'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6 space-y-4">
+            <Textarea
+              placeholder={
+                language === 'ar' ? 'أدخل حالتك المرضية...' : 
+                'Enter your medical condition...'
+              }
+              value={illness}
+              onChange={(e) => setIllness(e.target.value)}
+              className="min-h-[100px] border-blue-200 focus:border-blue-400"
+            />
+            
+            <div className="flex justify-end">
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+                disabled={isAnalyzing}
+                onClick={handleFindSpecialist}
+              >
+                {isAnalyzing ? 
+                  (language === 'ar' ? "جاري البحث..." : "Searching...") : 
+                  (language === 'ar' ? "البحث عن أخصائي" : "Find Specialist")}
+              </Button>
+            </div>
 
-        <NearbyHospitals />
+            {/* Specialist Results */}
+            {specialistResult && (
+              <div className="mt-4 p-4 border border-blue-200 rounded-lg bg-blue-50">
+                <h3 className="font-semibold mb-2">
+                  {language === 'ar' ? 'الاختصاصي المناسب' : 'Recommended Specialist'}
+                </h3>
+                <div className="mb-4">
+                  <h4 className="font-medium mb-1">
+                    {language === 'ar' ? 'باللغة العربية:' : 'In Arabic:'}
+                  </h4>
+                  <p className="text-right" dir="rtl">
+                    {specialistResult.translation}
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-medium mb-1">
+                    {language === 'ar' ? 'بالإنجليزية:' : 'In English:'}
+                  </h4>
+                  <p>{specialistResult.content}</p>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Find Hospitals Section */}
+        <Card className="border-purple-200 shadow-md">
+          <CardHeader className="bg-purple-50">
+            <CardTitle className="text-xl text-purple-800">
+              {language === 'ar' ? 'البحث عن مستشفيات قريبة' : 'Find Nearby Hospitals'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6 space-y-4">
+            <div className="flex flex-col gap-2">
+              <input
+                type="text"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder={language === 'ar' ? 'أدخل مدينتك أو عنوانك' : 'Enter your city or address'}
+                className="p-2 border border-gray-300 rounded-md"
+              />
+              <Button 
+                className="bg-purple-600 hover:bg-purple-700 text-white"
+                disabled={isAnalyzing}
+                onClick={handleFindHospitals}
+              >
+                {language === 'ar' ? 'بحث' : 'Search'}
+              </Button>
+            </div>
+            
+            {/* Hospital Results */}
+            {hospitalResult && (
+              <div className="mt-4">
+                <h3 className="font-semibold mb-2">
+                  {language === 'ar' ? 
+                    `تم العثور على ${hospitalResult.count} منشأة طبية في ${hospitalResult.location}` : 
+                    `Found ${hospitalResult.count} medical facilities in ${hospitalResult.location}`}
+                </h3>
+                <ul className="space-y-2">
+                  {hospitalResult.facilities.map((hospital, index) => (
+                    <li key={index} className="p-3 border border-gray-200 rounded-md hover:bg-gray-50">
+                      <a 
+                        href={hospital.maps_link} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-purple-600 hover:underline"
+                      >
+                        {hospital.name}
+                      </a>
+                      <p className="text-sm text-gray-500 mt-1">
+                        {language === 'ar' ? 'الموقع:' : 'Location:'} {hospital.latitude}, {hospital.longitude}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
 };
 
 export default Analyze;
+
+
