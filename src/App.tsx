@@ -11,6 +11,7 @@ import Chatbot from "./pages/Chatbot";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Analyze from "./pages/Analyze";
+import Contact from "./pages/Contact";
 import DoctorDashboard from "./pages/DoctorDashboard";
 import NotFound from "./pages/NotFound";
 import AuthGuard from "./components/AuthGuard";
@@ -61,6 +62,14 @@ const App = () => {
                   element={
                     <AuthGuard>
                       <Analyze />
+                    </AuthGuard>
+                  }
+                />
+                <Route
+                  path="/contact"
+                  element={
+                    <AuthGuard>
+                      <Contact />
                     </AuthGuard>
                   }
                 />

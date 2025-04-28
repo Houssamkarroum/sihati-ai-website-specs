@@ -1,18 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, LogOut, LayoutDashboard } from "lucide-react";
+import { Menu, LogOut, LayoutDashboard, Contact } from "lucide-react";
 import { toast } from "sonner";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "../contexts/LanguageContext";
 import { getTranslation } from "../utils/i18n";
 
 const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [logoColors, setLogoColors] = useState({
-    first: 'text-green-500',
-    second: 'text-white'
-  });
+  const [inoVisible, setInoVisible] = useState(true);
   const navigate = useNavigate();
   const { language } = useLanguage();
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
@@ -21,10 +17,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setLogoColors(prev => ({
-        first: prev.first === 'text-green-500' ? 'text-white' : 'text-green-500',
-        second: prev.second === 'text-white' ? 'text-green-500' : 'text-white'
-      }));
+      setInoVisible(prev => !prev);
     }, 2000);
 
     return () => clearInterval(interval);
@@ -42,10 +35,8 @@ const Navbar = () => {
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           <Link to="/" className="text-2xl font-bold">
-            <span className={`transition-colors duration-500 ${logoColors.first}`}>
-              SAHT
-            </span>
-            <span className={`transition-colors duration-500 ${logoColors.second}`}>
+            <span className="text-green-500">SAHT</span>
+            <span className={`transition-opacity duration-500 ${inoVisible ? 'opacity-100' : 'opacity-0'} text-white`}>
               -INO
             </span>
           </Link>
@@ -63,6 +54,10 @@ const Navbar = () => {
                 </Link>
                 <Link to="/analyze" className="px-3 py-2 text-sihati-secondary hover:text-sihati-primary transition-colors">
                   {getTranslation('analyze', language)}
+                </Link>
+                <Link to="/contact" className="px-3 py-2 text-sihati-secondary hover:text-sihati-primary transition-colors flex items-center">
+                  <Contact className="ml-2 h-4 w-4" />
+                  {getTranslation('contact', language)}
                 </Link>
                 {isDoctor && (
                   <Link to="/doctor-dashboard" className="px-3 py-2 text-sihati-secondary hover:text-sihati-primary transition-colors flex items-center">
@@ -130,6 +125,14 @@ const Navbar = () => {
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {getTranslation('analyze', language)}
+                  </Link>
+                  <Link 
+                    to="/contact" 
+                    className="px-3 py-2 text-sihati-secondary hover:text-sihati-primary transition-colors flex items-center"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Contact className="ml-2 h-4 w-4" />
+                    {getTranslation('contact', language)}
                   </Link>
                   {isDoctor && (
                     <Link 
